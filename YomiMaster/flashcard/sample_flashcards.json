@@ -1,0 +1,502 @@
+[
+  {
+    "id": "A001",
+    "japaneseWord": "単語1",
+    "meaning": "Meaning 1",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A002",
+    "japaneseWord": "単語2",
+    "meaning": "Meaning 2",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A003",
+    "japaneseWord": "単語3",
+    "meaning": "Meaning 3",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A004",
+    "japaneseWord": "単語4",
+    "meaning": "Meaning 4",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A005",
+    "japaneseWord": "単語5",
+    "meaning": "Meaning 5",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A006",
+    "japaneseWord": "単語6",
+    "meaning": "Meaning 6",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A007",
+    "japaneseWord": "単語7",
+    "meaning": "Meaning 7",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A008",
+    "japaneseWord": "単語8",
+    "meaning": "Meaning 8",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A009",
+    "japaneseWord": "単語9",
+    "meaning": "Meaning 9",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A010",
+    "japaneseWord": "単語10",
+    "meaning": "Meaning 10",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A011",
+    "japaneseWord": "単語11",
+    "meaning": "Meaning 11",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A012",
+    "japaneseWord": "単語12",
+    "meaning": "Meaning 12",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A013",
+    "japaneseWord": "単語13",
+    "meaning": "Meaning 13",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A014",
+    "japaneseWord": "単語14",
+    "meaning": "Meaning 14",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A015",
+    "japaneseWord": "単語15",
+    "meaning": "Meaning 15",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A016",
+    "japaneseWord": "単語16",
+    "meaning": "Meaning 16",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A017",
+    "japaneseWord": "単語17",
+    "meaning": "Meaning 17",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A018",
+    "japaneseWord": "単語18",
+    "meaning": "Meaning 18",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A019",
+    "japaneseWord": "単語19",
+    "meaning": "Meaning 19",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A020",
+    "japaneseWord": "単語20",
+    "meaning": "Meaning 20",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A021",
+    "japaneseWord": "単語21",
+    "meaning": "Meaning 21",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A022",
+    "japaneseWord": "単語22",
+    "meaning": "Meaning 22",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A023",
+    "japaneseWord": "単語23",
+    "meaning": "Meaning 23",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A024",
+    "japaneseWord": "単語24",
+    "meaning": "Meaning 24",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A025",
+    "japaneseWord": "単語25",
+    "meaning": "Meaning 25",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A026",
+    "japaneseWord": "単語26",
+    "meaning": "Meaning 26",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A027",
+    "japaneseWord": "単語27",
+    "meaning": "Meaning 27",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A028",
+    "japaneseWord": "単語28",
+    "meaning": "Meaning 28",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A029",
+    "japaneseWord": "単語29",
+    "meaning": "Meaning 29",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A030",
+    "japaneseWord": "単語30",
+    "meaning": "Meaning 30",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A031",
+    "japaneseWord": "単語31",
+    "meaning": "Meaning 31",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A032",
+    "japaneseWord": "単語32",
+    "meaning": "Meaning 32",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A033",
+    "japaneseWord": "単語33",
+    "meaning": "Meaning 33",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A034",
+    "japaneseWord": "単語34",
+    "meaning": "Meaning 34",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A035",
+    "japaneseWord": "単語35",
+    "meaning": "Meaning 35",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A036",
+    "japaneseWord": "単語36",
+    "meaning": "Meaning 36",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A037",
+    "japaneseWord": "単語37",
+    "meaning": "Meaning 37",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A038",
+    "japaneseWord": "単語38",
+    "meaning": "Meaning 38",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A039",
+    "japaneseWord": "単語39",
+    "meaning": "Meaning 39",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A040",
+    "japaneseWord": "単語40",
+    "meaning": "Meaning 40",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A041",
+    "japaneseWord": "単語41",
+    "meaning": "Meaning 41",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A042",
+    "japaneseWord": "単語42",
+    "meaning": "Meaning 42",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A043",
+    "japaneseWord": "単語43",
+    "meaning": "Meaning 43",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A044",
+    "japaneseWord": "単語44",
+    "meaning": "Meaning 44",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A045",
+    "japaneseWord": "単語45",
+    "meaning": "Meaning 45",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A046",
+    "japaneseWord": "単語46",
+    "meaning": "Meaning 46",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A047",
+    "japaneseWord": "単語47",
+    "meaning": "Meaning 47",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A048",
+    "japaneseWord": "単語48",
+    "meaning": "Meaning 48",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A049",
+    "japaneseWord": "単語49",
+    "meaning": "Meaning 49",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  },
+  {
+    "id": "A050",
+    "japaneseWord": "単語50",
+    "meaning": "Meaning 50",
+    "exampleSentence": "",
+    "pronunciation": "",
+    "reviewsSoFar": 0,
+    "lastInterval": 0,
+    "nextReviewDate": null
+  }
+]
