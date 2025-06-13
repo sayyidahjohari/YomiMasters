@@ -1,3 +1,5 @@
+import SwiftUI
+
 struct StatefulPreviewWrapper2<Content: View>: View {
     @State private var value1: Bool
     @State private var value2: Bool

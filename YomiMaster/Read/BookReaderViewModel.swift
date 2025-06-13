@@ -9,7 +9,7 @@ class BookReaderViewModel: ObservableObject {
     }
 
     func loadBook(named fileName: String) {
-        pages = BookLoader.loadBook(from: fileName)
+        pages = BookLoader.loadBook(from: fileName) // This now loads paginated content
     }
 
     func nextPage() {
@@ -24,3 +24,4 @@ class BookReaderViewModel: ObservableObject {
         }
     }
 }
+

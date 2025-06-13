@@ -1,110 +1,109 @@
 import SwiftUI
+import FirebaseAuth
 
 struct DeckListView: View {
     @EnvironmentObject var flashcardViewModel: FlashcardViewModel
+    @EnvironmentObject var authService: AuthService
 
-    @State private var showingEditDeckSheet = false
-    @State private var selectedDeckName: String = ""
-    @State private var newDeckName = ""
+    @State private var showingDeckEditor = false
+    @State private var editingDeck: Deck? = nil
 
     @State private var showingAddDeckSheet = false
     @State private var addDeckName = ""
 
     @State private var deckToDelete: String? = nil
 
+    @State private var showingProfileSheet = false  // New: profile sheet flag
+
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.warmBeige.opacity(0.9),
-                        Color.dustyRose.opacity(0.2)
-                    ]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+                Color(red: 0.96, green: 0.94, blue: 0.88)
+                    .ignoresSafeArea()
 
+                VStack(spacing: 20) {
+                    // Top bar with title at left and profile button at right
+                    HStack {
+                        Text("Flashcard Decks")
+                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .padding(.leading, 20)
+                            .padding(.top, 50)
 
-                VStack {
-                    Spacer()
-                    Text("Flashcard Decks")
-                        .font(.largeTitle)
-                        .fontWeight(.heavy)
-                        .padding(.top, 50)
-
-                    Spacer()
-
-                    VStack {
                         Spacer()
 
-                        // Add Deck Button
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                showingAddDeckSheet.toggle()
-                            }) {
-                                HStack {
-                                    Image(systemName: "plus.circle")
-                                        .font(.title2)
-                                    Text("Add Deck")
-                                        .font(.headline)
-                                }
-                                .padding()
+                        Button(action: {
+                            withAnimation {
+                                showingProfileSheet.toggle()
                             }
+                        }) {
+                            Image(systemName: "person.crop.circle.fill")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.primary)
                         }
+                        .padding(.trailing, 20)
+                        .padding(.top, 50)
+                    }
 
-                        // Header
-                        HStack {
-                            Spacer(minLength: 30)
-                            Text("Deck")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Cards")
-                                .frame(width: 150, alignment: .center)
-                            Spacer(minLength: 100)
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            showingAddDeckSheet.toggle()
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.title2)
+                                Text("Add Deck")
+                                    .font(.headline)
+                            }
+                            .padding(8)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(10)
                         }
-                        .padding(.trailing, 50)
-                        .fontWeight(.bold)
-                        Divider()
+                        .padding(.trailing)
+                    }
 
-                        let deckList = flashcardViewModel.decks.map { Deck(name: $0.key, flashcards: $0.value) }
+                    Divider()
 
-                        List {
-                            ForEach(deckList, id: \.name) { deck in
-                                NavigationLink(
-                                    destination: FlashcardListView(deckName: deck.name)
-                                ) {
+                    let deckList = flashcardViewModel.decks
+                        .sorted { $0.key.localizedCompare($1.key) == .orderedAscending }
+                        .map { Deck(name: $0.key, flashcards: $0.value) }
+
+                    ScrollView {
+                        VStack {
+                            VStack(spacing: 18) {
+                                ForEach(deckList, id: \.name) { deck in
                                     DeckRowView(
                                         deck: deck,
                                         onEdit: {
-                                            selectedDeckName = deck.name
-                                            newDeckName = deck.name
-                                            showingEditDeckSheet.toggle()
+                                            editingDeck = deck
+                                            showingDeckEditor = true
                                         },
                                         onDelete: {
                                             deckToDelete = deck.name
-                                        }
+                                        },
+                                        onSelect: {}
                                     )
                                 }
                             }
-                            .onDelete { indexSet in
-                                let keys = deckList.map { $0.name }
-                                for index in indexSet {
-                                    let key = keys[index]
-                                    flashcardViewModel.deleteDeck(named: key)
-                                }
-                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(LinearGradient.dustyRose2gradient)
+                                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+                            )
+                            .padding(.horizontal)
                         }
-                        .listStyle(PlainListStyle())
                     }
-                    .padding()
-                    .background(Color.clear)
+
+                    Spacer()
                 }
             }
             .ignoresSafeArea()
+            //.navigationTitle("Decks") // Removed
         }
-        .edgesIgnoringSafeArea(.all)
 
-        // Add Deck Sheet
+        // === Existing Add Deck sheet ===
         .sheet(isPresented: $showingAddDeckSheet, onDismiss: {
             addDeckName = ""
         }) {
@@ -137,49 +136,30 @@ struct DeckListView: View {
             .padding()
         }
 
-        // Edit Deck Name Sheet
-        .sheet(isPresented: $showingEditDeckSheet, onDismiss: {
-            newDeckName = ""
-        }) {
-            VStack(spacing: 20) {
-                Text("Edit Deck Name")
-                    .font(.title)
-                    .padding()
-
-                TextField("New Deck Name", text: $newDeckName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-
-                HStack {
-                    Button("Cancel") {
-                        showingEditDeckSheet = false
-                    }
-                    .padding()
-                    .foregroundColor(.red)
-
-                    Spacer()
-
-                    Button("Save") {
-                        guard !newDeckName.isEmpty,
-                              newDeckName != selectedDeckName,
-                              flashcardViewModel.decks[newDeckName] == nil else { return }
-
-                        let cards = flashcardViewModel.decks.removeValue(forKey: selectedDeckName)
-                        flashcardViewModel.decks[newDeckName] = cards ?? []
-                        flashcardViewModel.saveFlashcards()
-                        showingEditDeckSheet = false
-                    }
-                    .padding()
-                    .disabled(newDeckName.isEmpty || flashcardViewModel.decks.keys.contains(newDeckName))
-                }
-                .padding(.horizontal)
+        // === Existing Edit Deck sheet ===
+        .sheet(isPresented: $showingDeckEditor, onDismiss: {
+            if let deck = editingDeck {
+                flashcardViewModel.decks[deck.name] = deck.flashcards
+                flashcardViewModel.saveFlashcards()
+                editingDeck = nil
             }
-            .padding()
+        }) {
+            if let binding = Binding($editingDeck) {
+                DeckEditorView(deck: binding) {
+                    showingDeckEditor = false
+                }
+            } else {
+                Text("No deck selected")
+            }
         }
 
-        // Delete Confirmation Alert
+        // === New Profile sheet ===
+        .sheet(isPresented: $showingProfileSheet) {
+            ProfileView()
+                .environmentObject(authService)
+        }
+
+        // === Delete Deck alert ===
         .alert("Delete Deck?", isPresented: .constant(deckToDelete != nil), presenting: deckToDelete) { deckName in
             Button("Delete", role: .destructive) {
                 flashcardViewModel.deleteDeck(named: deckName)
@@ -192,58 +172,42 @@ struct DeckListView: View {
             Text("Are you sure you want to delete the deck '\(deckName)'?")
         }
 
-        // Load decks on appear
+        // === On appear: load or generate sample decks ===
         .onAppear {
             flashcardViewModel.loadFlashcards()
 
             if flashcardViewModel.decks.isEmpty {
                 print("🟡 No decks found — generating sample deck")
                 flashcardViewModel.generateAndSaveSampleFlashcards()
-                flashcardViewModel.loadFlashcards() // <-- force reload after save
+                flashcardViewModel.loadFlashcards()
             } else {
                 print("🟢 Loaded \(flashcardViewModel.decks.count) decks")
             }
         }
-
     }
 }
 
-// MARK: - Reusable Row View
-struct DeckRowView: View {
-    let deck: Deck
-    let onEdit: () -> Void
-    let onDelete: () -> Void
 
-    var body: some View {
-        HStack {
-            Text(deck.name)
-                .font(.headline)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text("\(deck.flashcards.count)")
-                .foregroundColor(.blue)
-                .frame(width: 150, alignment: .center)
-
-            Spacer(minLength: 80)
-
-            Button(action: onEdit) {
-                Image(systemName: "pencil")
-                    .foregroundColor(.blue)
-            }
-
-            Button(role: .destructive, action: onDelete) {
-                Image(systemName: "trash")
-            }
-            .buttonStyle(BorderlessButtonStyle())
-        }
-        .padding()
-    }
-}
-
-// MARK: - Preview
+// ------------------------------------
+// PreviewProvider for DeckListView
+// ------------------------------------
 struct DeckListView_Previews: PreviewProvider {
     static var previews: some View {
-        DeckListView()
-            .environmentObject(FlashcardViewModel())
+        let mockVM = FlashcardViewModel()
+        mockVM.decks = [
+            "N5 Vocabulary": [
+                Flashcard(japaneseWord: "猫", meaning: "Cat"),
+                Flashcard(japaneseWord: "犬", meaning: "Dog")
+            ],
+            "N4 Verbs": [
+                Flashcard(japaneseWord: "食べる", meaning: "Eat"),
+                Flashcard(japaneseWord: "歩く", meaning: "Walk"),
+                Flashcard(japaneseWord: "読む", meaning: "Read")
+            ]
+        ]
+        return DeckListView()
+            .environmentObject(mockVM)
+            .previewDevice("iPhone 15")
     }
 }

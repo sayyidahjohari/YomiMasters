@@ -1,6 +1,19 @@
+//
+//  JLPTN5ScrollView.swift
+//  YomiMaster
+//
+//  Created by Sayyidah Nafisah on 03/06/2025.
+//
+
+import SwiftUI
+import Firebase
+import FirebaseStorage
+import FirebaseFirestore
+import FirebaseAuth
+
 // JLPTN5ScrollView.swift
 struct JLPTN5ScrollView: View {
-    let books: [Book]
+    let books: [Bookfb]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

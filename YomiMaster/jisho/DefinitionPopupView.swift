@@ -2,14 +2,13 @@ import SwiftUI
 
 struct DefinitionPopupView: View {
     @EnvironmentObject var flashcardViewModel: FlashcardViewModel
+
     let selectedWord: String
-    let sentenceContext: String
-    let meaning: String
-    let furigana: String
-    let grammarExplanation: String
-    let exampleUsage: String
+    let jishoMeaning: String
+    let microsoftMeaning: String
+
     @Binding var showPopup: Bool
-    let deckName: String  // Add a deck name to specify where to save the flashcard
+    let deckName: String
 
     var body: some View {
         VStack(spacing: 20) {
@@ -21,48 +20,36 @@ struct DefinitionPopupView: View {
                 .cornerRadius(10)
 
             VStack(alignment: .leading, spacing: 15) {
-                SectionTitle(title: "Meaning", color: .blue)
-                Text(meaning)
+                SectionTitle(title: "Jisho Meaning", color: .green)
+                Text(jishoMeaning.isEmpty ? "No Jisho meaning" : jishoMeaning)
 
-                SectionTitle(title: "Context in Sentence", color: .purple)
-                Text("The phrase \(selectedWord) means '\(meaning)' as part of the sentence '\(sentenceContext)'.")
-
-                if !grammarExplanation.isEmpty {
-                    SectionTitle(title: "Grammar", color: .green)
-                    Text(grammarExplanation)
-                }
-
-                if !furigana.isEmpty {
-                    SectionTitle(title: "Reading (Furigana)", color: .orange)
-                    Text(furigana)
-                }
-
-                if !exampleUsage.isEmpty {
-                    SectionTitle(title: "Example Usage", color: .red)
-                    Text(exampleUsage)
-                }
+                SectionTitle(title: "Microsoft Translation", color: .blue)
+                Text(microsoftMeaning.isEmpty ? "No Microsoft translation" : microsoftMeaning)
             }
             .padding()
             .background(Color.white)
             .cornerRadius(15)
 
             Button("Add to Flashcard") {
+                let combinedMeaning =
+                    "Jisho meaning:\n\(jishoMeaning.isEmpty ? "No meaning" : jishoMeaning)\n\n" +
+                    "Microsoft translation:\n\(microsoftMeaning.isEmpty ? "No translation" : microsoftMeaning)"
+
                 flashcardViewModel.addFlashcard(
                     word: selectedWord,
-                    meaning: meaning.isEmpty ? "Meaning not available" : meaning,
+                    meaning: combinedMeaning,
                     toDeck: deckName
                 )
                 showPopup = false
             }
 
-
             .padding()
             .background(Color.softPink)
             .cornerRadius(10)
 
-                       Button("Close") {
-                           showPopup = false
-                       }
+            Button("Close") {
+                showPopup = false
+            }
             .font(.caption)
             .foregroundColor(.gray)
         }

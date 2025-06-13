@@ -44,3 +44,41 @@ struct Flashcard: Identifiable, Codable {
         )
     }
 }
+
+
+class FlashcardManager: ObservableObject {
+    static let shared = FlashcardManager()
+
+    @Published var decks: [String: [Flashcard]] = [:]
+
+    private init() {
+        loadFlashcards()
+    }
+
+    func addFlashcard(word: String, meaning: String, toDeck deckName: String) {
+        let newCard = Flashcard(japaneseWord: word, meaning: meaning)
+
+        if decks[deckName] == nil {
+            decks[deckName] = []
+        }
+
+        // Avoid duplicates (optional)
+        if !decks[deckName]!.contains(where: { $0.japaneseWord == word }) {
+            decks[deckName]?.append(newCard)
+            saveFlashcards()
+        }
+    }
+
+    func saveFlashcards() {
+        if let encoded = try? JSONEncoder().encode(decks) {
+            UserDefaults.standard.set(encoded, forKey: "flashcardDecks")
+        }
+    }
+
+    func loadFlashcards() {
+        if let saved = UserDefaults.standard.data(forKey: "flashcardDecks"),
+           let decoded = try? JSONDecoder().decode([String: [Flashcard]].self, from: saved) {
+            decks = decoded
+        }
+    }
+}

@@ -1,3 +1,11 @@
+//
+//  FrameReader.swift
+//  YomiMaster
+//
+//  Created by Sayyidah Nafisah on 01/06/2025.
+//
+
+
 import SwiftUI
 
 struct FrameReader: UIViewRepresentable {

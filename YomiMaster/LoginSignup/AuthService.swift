@@ -32,32 +32,71 @@ class AuthService: ObservableObject {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
                 completion(error)
-            } else {
-                DispatchQueue.main.async {
-                    self.user = result?.user
-                    self.isLoggedIn = true
-                    self.fetchUserRole()
+            } else if let user = result?.user {
+                // Reload the user to get the latest verification status
+                user.reload { error in
+                    if let error = error {
+                        completion(error)
+                        return
+                    }
+
+                    if user.isEmailVerified {
+                        DispatchQueue.main.async {
+                            self.user = user
+                            self.isLoggedIn = true
+                            self.fetchUserRole()
+                        }
+                        completion(nil)
+                    } else {
+                        // Sign out unverified user
+                        try? Auth.auth().signOut()
+                        let notVerifiedError = NSError(
+                            domain: "",
+                            code: 401,
+                            userInfo: [NSLocalizedDescriptionKey: "Email not verified. Please check your inbox."]
+                        )
+                        completion(notVerifiedError)
+                    }
                 }
-                completion(nil)
             }
         }
     }
 
-    func signUp(email: String, password: String, completion: @escaping (Error?) -> Void) {
+    func signUp(name: String, email: String, password: String, completion: @escaping (Error?) -> Void) {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
                 completion(error)
             } else if let user = result?.user {
-                DispatchQueue.main.async {
-                    self.user = user
-                    self.isLoggedIn = true
-                    self.saveUserRole(role: "user")
-                    self.fetchUserRole()
+                // Save user info (name, email) in Firestore
+                let userData: [String: Any] = [
+                    "name": name,
+                    "email": email,
+                    "role": "user"  // or default role
+                ]
+
+                Firestore.firestore().collection("users").document(user.uid).setData(userData) { firestoreError in
+                    if let firestoreError = firestoreError {
+                        completion(firestoreError)
+                        return
+                    }
+
+                    // Send verification email after saving data
+                    user.sendEmailVerification { sendError in
+                        if let sendError = sendError {
+                            completion(sendError)
+                        } else {
+                            DispatchQueue.main.async {
+                                self.user = nil
+                                self.isLoggedIn = false
+                            }
+                            completion(nil)
+                        }
+                    }
                 }
-                completion(nil)
             }
         }
     }
+
 
     func signOut() {
         do {
@@ -97,6 +136,9 @@ class AuthService: ObservableObject {
             }
         }
     }
+   
+
+
 
     func saveUserRole(role: String) {
         guard let uid = user?.uid, let email = user?.email else { return }

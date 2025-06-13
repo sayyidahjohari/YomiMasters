@@ -1,89 +1,103 @@
 import SwiftUI
 
-struct DeckEditView: View {
-    @EnvironmentObject var flashcardViewModel: FlashcardViewModel
+struct DeckEditorView: View {
+    @Binding var deck: Deck
+    var onSave: () -> Void
 
-    let deckName: String
-
-    @State private var editingFlashcard: Flashcard? = nil
-    @State private var newWord: String = ""
-    @State private var newMeaning: String = ""
+    @State private var newWord = ""
+    @State private var newMeaning = ""
+    @State private var editingIndex: Int? = nil
+    @State private var showDeleteAlert = false
+    @State private var indexToDelete: Int? = nil
 
     var body: some View {
-        VStack {
-            Text("Editing Deck: \(deckName)")
-                .font(.title)
-                .padding()
+        NavigationStack {
+            Form {
+                Section(header: Text("Deck Name")) {
+                    TextField("Deck Name", text: $deck.name)
+                        .textFieldStyle(.roundedBorder)
+                }
 
-            List {
-                ForEach(flashcardViewModel.decks[deckName] ?? []) { flashcard in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(flashcard.word)
-                                .font(.headline)
-                            Text(flashcard.meaning)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                        }
+                Section(header: Text("Add New Flashcard")) {
+                    TextField("Word", text: $newWord)
+                    TextField("Meaning", text: $newMeaning)
+                    Button("Add Flashcard") {
+                        let newFlashcard = Flashcard(japaneseWord: newWord, meaning: newMeaning)
+                        deck.flashcards.append(newFlashcard)
+                        newWord = ""
+                        newMeaning = ""
+                    }
+                    .disabled(newWord.isEmpty || newMeaning.isEmpty)
+                }
 
-                        Spacer()
-
-                        Button(action: {
-                            editingFlashcard = flashcard
-                            newWord = flashcard.word
-                            newMeaning = flashcard.meaning
-                        }) {
-                            Image(systemName: "pencil")
-                                .foregroundColor(.blue)
-                        }
-
-                        Button(role: .destructive) {
-                            if let index = flashcardViewModel.decks[deckName]?.firstIndex(of: flashcard) {
-                                flashcardViewModel.decks[deckName]?.remove(at: index)
-                                flashcardViewModel.saveFlashcards()
+                Section(header: Text("Flashcards in Deck")) {
+                    ForEach(deck.flashcards.indices, id: \.self) { index in
+                        HStack {
+                            if editingIndex == index {
+                                VStack(alignment: .leading) {
+                                    TextField("Word", text: $deck.flashcards[index].japaneseWord)
+                                        .textFieldStyle(.roundedBorder)
+                                    TextField("Meaning", text: $deck.flashcards[index].meaning)
+                                        .textFieldStyle(.roundedBorder)
+                                }
+                            } else {
+                                VStack(alignment: .leading) {
+                                    Text(deck.flashcards[index].japaneseWord)
+                                        .fontWeight(.bold)
+                                    Text(deck.flashcards[index].meaning)
+                                        .foregroundColor(.gray)
+                                }
                             }
-                        } label: {
-                            Image(systemName: "trash")
+
+                            Spacer()
+
+                            // Edit Button
+                            Button(action: {
+                                if editingIndex == index {
+                                    editingIndex = nil // Done editing
+                                } else {
+                                    editingIndex = index // Start editing this one
+                                }
+                            }) {
+                                Image(systemName: editingIndex == index ? "checkmark" : "pencil")
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            .padding(.trailing, 6)
+
+                            // Delete Button
+                            Button(role: .destructive) {
+                                indexToDelete = index
+                                showDeleteAlert = true
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
                 }
             }
-        }
-        .sheet(item: $editingFlashcard) { flashcard in
-            VStack(spacing: 20) {
-                Text("Edit Flashcard")
-                    .font(.headline)
-
-                TextField("Japanese Word", text: $newWord)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                TextField("Meaning", text: $newMeaning)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                HStack {
-                    Button("Cancel") {
-                        editingFlashcard = nil
-                    }
-                    .foregroundColor(.red)
-
-                    Spacer()
-
+            .navigationTitle("Edit Deck")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        guard !newWord.isEmpty, !newMeaning.isEmpty else { return }
-
-                        if let index = flashcardViewModel.decks[deckName]?.firstIndex(where: { $0.id == flashcard.id }) {
-                            flashcardViewModel.decks[deckName]?[index].word = newWord
-                            flashcardViewModel.decks[deckName]?[index].meaning = newMeaning
-                            flashcardViewModel.saveFlashcards()
-                        }
-
-                        editingFlashcard = nil
+                        onSave()
                     }
                 }
-                .padding(.top)
             }
-            .padding()
+            .alert("Delete Flashcard?", isPresented: $showDeleteAlert) {
+                Button("Delete", role: .destructive) {
+                    if let index = indexToDelete {
+                        deck.flashcards.remove(at: index)
+                    }
+                    indexToDelete = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    indexToDelete = nil
+                }
+            } message: {
+                Text("Are you sure you want to delete this flashcard?")
+            }
         }
     }
 }

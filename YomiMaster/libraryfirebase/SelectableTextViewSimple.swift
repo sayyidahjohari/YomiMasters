@@ -14,27 +14,27 @@ struct SelectableTextViewSimple: UIViewRepresentable {
         textView.delegate = context.coordinator
         textView.isEditable = false
         textView.isSelectable = true
-        textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = true
         textView.backgroundColor = .clear
         textView.textColor = textColor
         textView.font = UIFont.systemFont(ofSize: fontSize)
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
-        textView.isUserInteractionEnabled = true
+        textView.isScrollEnabled = false
 
-        // Disable default menu but keep selection
-        textView.inputAssistantItem.leadingBarButtonGroups = []
-        textView.inputAssistantItem.trailingBarButtonGroups = []
-
+        // Disable autocorrect, prediction, spellcheck etc. if you want
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.autocapitalizationType = .none
         return textView
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.text = text
-
-        // Clear selection if triggered
-        DispatchQueue.main.async {
-            if clearSelectionTrigger {
+        if uiView.text != text {
+            uiView.text = text
+        }
+        if clearSelectionTrigger {
+            DispatchQueue.main.async {
                 uiView.selectedTextRange = nil
             }
         }
@@ -46,10 +46,7 @@ struct SelectableTextViewSimple: UIViewRepresentable {
 
     class Coordinator: NSObject, UITextViewDelegate {
         var parent: SelectableTextViewSimple
-
-        init(_ parent: SelectableTextViewSimple) {
-            self.parent = parent
-        }
+        init(_ parent: SelectableTextViewSimple) { self.parent = parent }
 
         func textViewDidChangeSelection(_ textView: UITextView) {
             guard let selectedRange = textView.selectedTextRange,
@@ -58,15 +55,11 @@ struct SelectableTextViewSimple: UIViewRepresentable {
                   !selectedText.isEmpty else {
                 return
             }
-
-            // Notify selected text
             parent.onSelection?(selectedText)
 
-            // Calculate popup position relative to textView
             let rect = textView.firstRect(for: selectedRange)
             var position = CGPoint(x: rect.origin.x, y: rect.origin.y - 50)
 
-            // Clamp position so popup doesn't go offscreen (assuming popup width ~150)
             let screenWidth = UIScreen.main.bounds.width
             position.x = max(0, min(screenWidth - 150, position.x))
 

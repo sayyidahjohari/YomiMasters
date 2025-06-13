@@ -7,33 +7,49 @@ import FirebaseAuth
 struct HomepageView: View {
     @StateObject private var viewModel = HomepageViewModel()
     @StateObject private var bookViewModel = BooksViewModel()
-    @State private var showProfile = false
-    @State private var showSignOutConfirmation = false
+    @StateObject private var dailyGoalsVM = DailyGoalsViewModel()
+    
     @EnvironmentObject var flashcardViewModel: FlashcardViewModel
     @EnvironmentObject var authService: AuthService
-    @Binding var isNavBarVisible: Bool
-    @State private var showPopup: Bool = false
-    @ObservedObject var checklistVM: ChecklistViewModel
-
-
+    
+    @Binding var isNavBarVisible: Bool // If you want to use it
+    
+    @State private var userName: String = "Yomi"  // default fallback
+    @State private var showSignOutConfirmation = false
+    @State private var showingProfileSheet = false
+    
+    func fetchUserName(uid: String) {
+        let db = Firestore.firestore()
+        let docRef = db.collection("users").document(uid)
+        docRef.getDocument { document, error in
+            if let document = document, document.exists {
+                let data = document.data()
+                let name = data?["name"] as? String
+                DispatchQueue.main.async {
+                    userName = name ?? "Yomi"
+                }
+            }
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 Color(red: 0.96, green: 0.94, blue: 0.88)
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 0) {
                     // Top Bar
                     HStack {
-                        Text("")
+                        Text("")  // You can put a title if needed
                             .font(.system(size: 34, weight: .bold))
                             .foregroundColor(.primary)
-
+                        
                         Spacer()
-
+                        
                         Button(action: {
                             withAnimation {
-                                showProfile.toggle()
+                                showingProfileSheet.toggle()
                             }
                         }) {
                             Image(systemName: "person.crop.circle.fill")
@@ -41,15 +57,16 @@ struct HomepageView: View {
                                 .frame(width: 40, height: 40)
                                 .foregroundColor(.primary)
                         }
+                        
                     }
                     .padding(.horizontal)
                     .padding(.top, 16)
                     .padding(.bottom, 12)
-
-                    ScrollView(.vertical) {
+                    
+                    ScrollView(.vertical, showsIndicators: true) {
                         VStack(spacing: 30) {
-                            GreetingView(email: authService.user?.email)
-
+                            GreetingView(name: userName)
+                            
                             HStack {
                                 Text(viewModel.streakMessage)
                                     .font(.headline)
@@ -57,131 +74,43 @@ struct HomepageView: View {
                                 Spacer()
                             }
                             .padding(.horizontal, 20)
-
+                            
                             TextField("Search...", text: $viewModel.searchText)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .padding(.horizontal, 20)
-
-                            // ✅ N5 Books Horizontal Scroll
+                            
+                            // N5 Books Horizontal Scroll
                             if let n5Books = bookViewModel.booksByLevel["N5"], !n5Books.isEmpty {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("JLPT N5 Picks")
-                                        .font(.title2)
-                                        .bold()
-                                        .padding(.horizontal, 20)
-
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 20) {
-                                            ForEach(n5Books) { book in
-                                                NavigationLink(destination: BookContentView(filename: book.filename)
-                                                    .environmentObject(flashcardViewModel)
-                                                ) {
-                                                    VStack(spacing: 8) {
-                                                        AsyncImage(url: URL(string: book.coverImageUrl ?? "")) { phase in
-                                                            if let image = phase.image {
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                            } else {
-                                                                Image("book")
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                            }
-                                                        }
-                                                        .frame(width: 120, height: 170)
-                                                        .cornerRadius(12)
-                                                        .clipped()
-
-                                                        Text(book.title)
-                                                            .font(.caption)
-                                                            .foregroundColor(.primary)
-                                                            .multilineTextAlignment(.center)
-                                                            .lineLimit(2)
-                                                            .frame(height: 40)
-                                                    }
-                                                    .frame(width: 140)
-                                                    .padding(8)
-                                                    .background(Color.white)
-                                                    .cornerRadius(12)
-                                                    .shadow(radius: 3)
-                                                }
-                                                .buttonStyle(PlainButtonStyle())
-                                            }
-                                        }
-                                        .padding(.horizontal, 20)
-                                    }
-                                }
+                                JLPTN5ScrollView(books: n5Books)
                             }
-
-                            WordOfTheDayView(word: "森 (もり)", meaning: "Forest")
+                            
+                            DailyGoalsView(viewModel: dailyGoalsVM)
                                 .padding(.horizontal, 20)
-
-                            // 🔜 Insert ChecklistView here in your actual project
-                            ChecklistView(viewModel: checklistVM)
-
-                            TodayProgressView()
-                                .padding(.bottom, 80)
                         }
                         .padding(.top, 10)
                     }
                 }
-
-                // Profile Popup
-                if showProfile {
-                    VStack(alignment: .leading, spacing: 16) {
-                        if let user = authService.user {
-                            Text("Email: \(user.email ?? "Unknown")")
-                            Text("Role: \(authService.role ?? "Unknown")")
-                        }
-
-                        Button(role: .destructive) {
-                            showSignOutConfirmation = true
-                        } label: {
-                            Text("Sign Out")
-                                .bold()
-                        }
-
-                        Button("Close") {
-                            withAnimation {
-                                showProfile = false
-                            }
-                        }
-                    }
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(12)
-                    .shadow(radius: 10)
-                    .frame(width: 250)
-                    .padding(.leading)
-                    .padding(.top, 60)
-                    .transition(.move(edge: .top))
-                }
             }
             .onAppear {
                 bookViewModel.fetchBooks()
+                
+                if let uid = Auth.auth().currentUser?.uid {
+                    fetchUserName(uid: uid)
+                }
+            }
+            .sheet(isPresented: $showingProfileSheet) {
+                ProfileView()
+                    .environmentObject(authService)
             }
             .alert("Are you sure you want to sign out?", isPresented: $showSignOutConfirmation) {
                 Button("Cancel", role: .cancel) { }
                 Button("Sign Out", role: .destructive) {
                     authService.signOut()
                     withAnimation {
-                        showProfile = false
+                        showingProfileSheet = false
                     }
                 }
             }
-        }
-    }
-}
-
-struct HomepageView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatefulPreviewWrapper(true) { isVisible in
-            HomepageView(
-                isNavBarVisible: isVisible,
-                checklistVM: ChecklistViewModel()
-            )
-            .environmentObject(FlashcardViewModel())
-            .environmentObject(AuthService())
         }
     }
 }

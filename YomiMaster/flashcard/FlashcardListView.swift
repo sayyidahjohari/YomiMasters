@@ -1,101 +1,84 @@
 import SwiftUI
 
 struct FlashcardListView: View {
-    var deckName: String
+    @Binding var deckName: String
+    var onDeleteDeck: () -> Void
     @EnvironmentObject var flashcardViewModel: FlashcardViewModel
+    @Environment(\.dismiss) var dismiss
+    @State private var newDeckName: String = ""
+    @State private var showRenameField = false
 
     var body: some View {
         let flashcards = flashcardViewModel.getFlashcards(forDeck: deckName) ?? []
 
-        ZStack {
-            // Gradient Background
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color("warmBeige").opacity(0.9),
-                    Color("dustyRose").opacity(0.2)
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+        NavigationView {
+            ZStack {
+                Color(red: 0.96, green: 0.94, blue: 0.88)
+                    .ignoresSafeArea()
 
-            List {
-                // Review Start Button
-                NavigationLink(destination: FlashcardView(flashcards: flashcards, deckName: deckName)) {
-                    VStack(alignment: .leading) {
-                        Text("Start Deck Review")
-                            .font(.headline)
-                        Text("Total Cards: \(flashcards.count)")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.vertical, 8)
-                }
-
-                // Flashcard Rows
-                ForEach(flashcards) { card in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(card.japaneseWord)
-                            .font(.headline)
-                        Text("Meaning: \(card.meaning)")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-
-                        if !card.pronunciation.isEmpty {
-                            Text("Pronunciation: \(card.pronunciation)")
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
+                List {
+                    Section(header: Text("Deck Info")) {
+                        HStack {
+                            if showRenameField {
+                                TextField("New Deck Name", text: $newDeckName)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                Button("Save") {
+                                    renameDeck()
+                                }
+                                .disabled(newDeckName.isEmpty)
+                            } else {
+                                Text(deckName)
+                                    .font(.headline)
+                                Spacer()
+                                Button("Rename") {
+                                    showRenameField = true
+                                    newDeckName = deckName
+                                }
+                            }
                         }
 
-                        if !card.exampleSentence.isEmpty {
-                            Text("Example: \(card.exampleSentence)")
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
+                        Button("Delete Deck", role: .destructive) {
+                            onDeleteDeck()
+                            dismiss()
                         }
                     }
-                    .padding(.vertical, 6)
-                }
-                .onDelete { indexSet in
-                    flashcardViewModel.removeFlashcard(at: indexSet, fromDeck: deckName)
+
+                    Section(header: Text("Cards")) {
+                        ForEach(flashcards) { card in
+                            VStack(alignment: .leading) {
+                                Text(card.japaneseWord)
+                                    .font(.headline)
+                                Text(card.meaning)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        .onDelete { indexSet in
+                            flashcardViewModel.removeFlashcard(at: indexSet, fromDeck: deckName)
+                        }
+                    }
                 }
             }
-            .background(Color.clear)
-        }
-        .navigationTitle(deckName)
-        .toolbar {
-            EditButton()
-        }
-    }
-}
-
-struct FlashcardListView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            FlashcardListView(deckName: "Sample Deck")
-                .environmentObject(MockFlashcardViewModel())
+            .navigationTitle("Edit Deck")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") {
+                        dismiss()
+                    }
+                }
+            }
         }
     }
-}
 
-class MockFlashcardViewModel: FlashcardViewModel {
-    override func getFlashcards(forDeck deckName: String) -> [Flashcard]? {
-        return [
-            Flashcard(
-                japaneseWord: "猫",
-                meaning: "Cat",
-                exampleSentence: "猫が寝ています。",
-                pronunciation: "ねこ",
-                reviewsSoFar: 2,
-                lastInterval: 3.0
-            ),
-            Flashcard(
-                japaneseWord: "犬",
-                meaning: "Dog",
-                exampleSentence: "犬は元気です。",
-                pronunciation: "いぬ",
-                reviewsSoFar: 1,
-                lastInterval: 1.0
-            )
-        ]
+    func renameDeck() {
+        guard !newDeckName.isEmpty,
+              newDeckName != deckName,
+              flashcardViewModel.decks[newDeckName] == nil else { return }
+
+        let cards = flashcardViewModel.decks.removeValue(forKey: deckName)
+        flashcardViewModel.decks[newDeckName] = cards ?? []
+        flashcardViewModel.saveFlashcards()
+        deckName = newDeckName
+        showRenameField = false
     }
 }

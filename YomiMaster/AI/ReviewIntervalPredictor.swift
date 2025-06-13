@@ -1,3 +1,11 @@
+//
+//  ReviewIntervalPredictor.swift
+//  YomiMaster
+//
+//  Created by Sayyidah Nafisah on 24/05/2025.
+//
+
+
 import CoreML
 
 class ReviewIntervalPredictor {

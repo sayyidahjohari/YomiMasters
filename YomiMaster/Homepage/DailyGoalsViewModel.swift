@@ -1,3 +1,11 @@
+//
+//  DailyGoalsViewModel.swift
+//  YomiMaster
+//
+//  Created by Sayyidah Nafisah on 03/06/2025.
+//
+
+
 import Foundation
 
 class DailyGoalsViewModel: ObservableObject {

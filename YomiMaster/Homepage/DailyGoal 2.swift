@@ -1,77 +1,105 @@
 import SwiftUI
 
-struct DailyGoal: Identifiable {
-    let id = UUID()
-    let title: String    // Fixed text, e.g. "Read Book"
+struct DailyGoal: Identifiable, Codable {
+    let id: UUID
+    let title: String
     var targetNumber: Int
-    var isCompleted: Bool = false
+    var isCompleted: Bool
+
+    init(id: UUID = UUID(), title: String, targetNumber: Int, isCompleted: Bool = false) {
+        self.id = id
+        self.title = title
+        self.targetNumber = targetNumber
+        self.isCompleted = isCompleted
+    }
 }
 
-class DailyGoalsViewModel: ObservableObject {
-    @Published var goals: [DailyGoal] = [
-        DailyGoal(title: "Read Book", targetNumber: 1),
-        DailyGoal(title: "Review Flashcards", targetNumber: 10)
-    ]
-}
+
 
 struct DailyGoalsView: View {
     @ObservedObject var viewModel: DailyGoalsViewModel
-    
     @State private var editingGoalID: UUID? = nil
     @State private var editNumberText: String = ""
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Today's Goal")
-                .font(.title2)
+            Text("Today's Goals")
+                .font(.title)
                 .bold()
                 .padding(.bottom, 10)
-            
+
             ForEach($viewModel.goals) { $goal in
-                HStack {
-                    // Checkbox toggle
-                    Button(action: {
-                        goal.isCompleted.toggle()
-                    }) {
-                        Image(systemName: goal.isCompleted ? "checkmark.square.fill" : "square")
-                            .foregroundColor(goal.isCompleted ? .green : .gray)
-                            .font(.title2)
-                    }
-                    
-                    Text(goal.title)
-                        .frame(width: 150, alignment: .leading)
-                    
-                    Spacer()
-                    
-                    if editingGoalID == goal.id {
-                        TextField("Number", text: $editNumberText)
-                            .keyboardType(.numberPad)
-                            .frame(width: 40)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                        
-                        Button("Save") {
-                            if let newNumber = Int(editNumberText), newNumber > 0 {
-                                goal.targetNumber = newNumber
-                            }
-                            editingGoalID = nil
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                    } else {
-                        Text("\(goal.targetNumber)")
-                            .frame(width: 40)
-                        
+                VStack {
+                    HStack(alignment: .center) {
                         Button(action: {
-                            editingGoalID = goal.id
-                            editNumberText = "\(goal.targetNumber)"
+                            goal.isCompleted.toggle()
+                            viewModel.saveGoals()
                         }) {
-                            Image(systemName: "pencil")
+                            Image(systemName: goal.isCompleted ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(goal.isCompleted ? .green : .gray)
+                                .font(.title)
                         }
-                        .buttonStyle(BorderlessButtonStyle())
+                        
+                        if editingGoalID == goal.id {
+                            Text("\(goal.title)")
+                                .font(.title3)
+                                .foregroundColor(.black)
+                            
+                            TextField("Number", text: $editNumberText)
+                                .keyboardType(.numberPad)
+                                .frame(width: 50)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            
+                            Text(goal.title.lowercased().contains("flashcard") ? "flashcards" : "book")
+                                .font(.title3)
+                            
+                            Button("Save") {
+                                if let newNumber = Int(editNumberText), newNumber > 0 {
+                                    goal.targetNumber = newNumber
+                                    viewModel.saveGoals()
+                                }
+                                editingGoalID = nil
+                            }
+                            .font(.caption)
+                        } else {
+                            Text(buildGoalText(for: goal))
+                                .font(.title3)
+                                .foregroundColor(.black)
+                                .onTapGesture {
+                                    editingGoalID = goal.id
+                                    editNumberText = "\(goal.targetNumber)"
+                                }
+                        }
+                        
+                        Spacer()
                     }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(15)
+                    .shadow(color: .gray.opacity(0.3), radius: 4, x: 0, y: 2)
                 }
-                .padding(.horizontal)
             }
+
+            Spacer()
         }
         .padding()
+        .frame(maxWidth: .infinity)
+        .background(LinearGradient.dustyRoseGradient)
+        .cornerRadius(25)
+        .shadow(radius: 5)
+        .padding()
     }
+
+    func buildGoalText(for goal: DailyGoal) -> AttributedString {
+        var str = AttributedString("\(goal.title) \(goal.targetNumber) \(goal.title.lowercased().contains("flashcard") ? "flashcards" : "book")")
+        
+        if let numberRange = str.range(of: "\(goal.targetNumber)") {
+            str[numberRange].foregroundColor = .blue
+            str[numberRange].font = .title3.bold()
+        }
+        return str
+    }
+}
+#Preview {
+    DailyGoalsView(viewModel: DailyGoalsViewModel())
 }

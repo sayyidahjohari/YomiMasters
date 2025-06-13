@@ -16,14 +16,8 @@ struct FlashcardView: View {
                 let flashcard = flashcards[currentIndex]
 
                 ZStack {
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color.warmBeige.opacity(0.9),
-                            Color.dustyRose.opacity(0.2)
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+                    Color(red: 0.96, green: 0.94, blue: 0.88)
+                        .ignoresSafeArea()
 
                     VStack {
                         HStack {
@@ -44,16 +38,7 @@ struct FlashcardView: View {
                                     Text(flashcard.meaning)
                                         .font(.title).bold().foregroundColor(.blue)
 
-                                    Text("Example Sentence:")
-                                        .font(.headline).padding(.top)
-
-                                    Text(flashcard.exampleSentence)
-                                        .font(.body).italic().padding()
-
-                                    Text("Pronunciation: \(flashcard.pronunciation)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-
+            
                                     Spacer()
 
                                     HStack(spacing: 20) {
@@ -65,9 +50,7 @@ struct FlashcardView: View {
                                         }
                                     }
 
-                                    Button("Edit") {
-                                        // Handle edit
-                                    }
+                                    
                                     .padding()
                                     .buttonStyle(OptionButtonStyle(color: .gray))
                                 }
@@ -108,9 +91,7 @@ struct FlashcardView: View {
                     Text("Deck Completed!")
                         .font(.largeTitle)
                         .padding()
-                    Button("Back") {
-                        // NavigationStack auto-handles back
-                    }
+                    
                 }
             }
         }
@@ -118,12 +99,18 @@ struct FlashcardView: View {
 
     func handleReview(level: String) {
         print("Reviewed with difficulty: \(level)")
-        // Save review if needed here
+        if currentIndex < flashcards.count {
+            let flashcard = flashcards[currentIndex]
+            flashcardViewModel.updateFlashcardReview(deckName: deckName, flashcard: flashcard, difficultyLabel: level)
+        }
         withAnimation {
             isFlipped = false
             currentIndex += 1
         }
     }
+
+    
+
 
     func colorFor(_ level: String) -> Color {
         switch level {

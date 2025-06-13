@@ -2,9 +2,10 @@ import SwiftUI
 
 struct PopupMenuView: View {
     @Binding var showFurigana: Bool
-    @Binding var bookmarkedPages: [Int]
-    @Binding var highlightedWords: Set<String>
-    let pages: [String]
+    @Binding var bookmarkedPages: Set<Int>
+    @Binding var highlightedWords: Set<HighlightedWord> 
+    let pages: [String] // Array of pages to display chapters
+    let currentPageIndex: Int
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -16,10 +17,17 @@ struct PopupMenuView: View {
                 if bookmarkedPages.isEmpty {
                     Text("No bookmarks yet.").foregroundColor(.gray)
                 } else {
-                    ForEach(bookmarkedPages, id: \.self) { page in
+                    ForEach(bookmarkedPages.sorted(), id: \.self) { page in
                         Text("Page \(page + 1)")
                     }
                 }
+
+                Button(action: toggleBookmark) {
+                    Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                        .foregroundColor(isBookmarked ? .red : .primary)
+                        .font(.title)
+                }
+                .padding(.top, 10)
             }
 
             VStack(alignment: .leading) {
@@ -28,7 +36,7 @@ struct PopupMenuView: View {
                     Text("No highlighted words yet.").foregroundColor(.gray)
                 } else {
                     ForEach(Array(highlightedWords), id: \.self) { word in
-                        Text(word)
+                        Text("\(word.word) (Page \(word.page + 1))")
                     }
                 }
             }
@@ -41,5 +49,17 @@ struct PopupMenuView: View {
             }
         }
         .padding()
+    }
+
+    private var isBookmarked: Bool {
+        bookmarkedPages.contains(currentPageIndex)
+    }
+
+    private func toggleBookmark() {
+        if isBookmarked {
+            bookmarkedPages.remove(currentPageIndex)
+        } else {
+            bookmarkedPages.insert(currentPageIndex)
+        }
     }
 }

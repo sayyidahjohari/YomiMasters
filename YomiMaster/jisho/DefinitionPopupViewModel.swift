@@ -1,29 +1,19 @@
 import Foundation
-import Combine
 
 class DefinitionPopupViewModel: ObservableObject {
-    @Published var jishoResult: JishoWord?
+    @Published var jishoMeaning: String = "Loading..."
+    @Published var reading: String = ""
 
-    func fetchJishoDefinition(for word: String) {
+    func fetchDefinition(for word: String) {
         JishoAPIManager.shared.searchWord(word) { result in
             DispatchQueue.main.async {
-                self.jishoResult = result
+                if let wordData = result {
+                    self.jishoMeaning = wordData.senses.first?.english_definitions.joined(separator: ", ") ?? "No meaning found"
+                    self.reading = wordData.japanese.first?.reading ?? ""
+                } else {
+                    self.jishoMeaning = "Definition not found"
+                }
             }
         }
-    }
-
-    var romaji: String? {
-        if let reading = jishoResult?.japanese.first?.reading {
-            return KanaKit().romaji(from: reading)
-        }
-        return nil
-    }
-
-    var meaning: String {
-        jishoResult?.senses.first?.english_definitions.joined(separator: ", ") ?? "No meaning found"
-    }
-
-    var reading: String {
-        jishoResult?.japanese.first?.reading ?? ""
     }
 }
